@@ -1,12 +1,10 @@
 
-
-
 const http = require('http');
-const path = require('path');
+
 
 const url = require('url');
 const fsPromise = require('fs').promises;
-
+const path = require('path');
 
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(async(req,res) =>{
@@ -17,6 +15,8 @@ const server = http.createServer(async(req,res) =>{
    
     const myPathName = myURl.pathname;
     const id = myURl.searchParams.get('id');
+
+     console.log(req.url);
 
     if(myPathName === '/' && id >= 0 && id <= 5)
     {
@@ -38,21 +38,26 @@ const server = http.createServer(async(req,res) =>{
         res.writeHead(200,{'Content-Type': 'text/html'});
         res.end(html);
 
+    }else if((req.url).includes('.png'))
+    {
+        const image = await fsPromise.readFile(path.join(__dirname,'public','image',`${req.url.slice(1)}`));
+        res.writeHead(200,{'Content-Type': 'image/png'});
+        res.end(image);
+    }else if((req.url).includes('.css'))
+    {
+        const mycss = await fsPromise.readFile(path.join(__dirname,'public','css',`${req.url.slice(1)}`));
+        res.writeHead(200,{'Content-type' : 'text/css'});
+        res.end(mycss);
     }else 
     {
          
         res.writeHead(200,{'Content-Type': 'text/html'});
         res.end('<h1> File not found </h1>');
     }
-     
-   
-    
-    console.log(myURl);
-    console.log(id);
 });
 
 
-
+// /\.(png)$/i.test(req.url)
 
 server.listen(PORT,() =>{
     console.log('server is running on : ', PORT);
