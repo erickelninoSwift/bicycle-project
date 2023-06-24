@@ -31,7 +31,8 @@ const server = http.createServer(async(req,res) =>{
 
             for(let index = 0; index <= bicycleData.length - 1;index++)
             {
-                allbicycle += replaceTemplete(AllmainBicycle,bicycleData[index]);
+                allbicycle += frontPagereplace(AllmainBicycle,bicycleData[index]);
+               
             }
             
 
@@ -99,6 +100,29 @@ function replaceTemplete(html,currentBicyle)
         }
 
         html = html.replace(/<%NEWPRICE%>/g,price);
+
+        return html
+
+}
+
+function frontPagereplace(html,currentBicyle)
+{
+    html = html.replace(/<%IMAGES%>/g,currentBicyle.image);
+        html = html.replace(/<%NAME%>/g,currentBicyle.name);
+        html = html.replace(/<%NAME%>/g,currentBicyle.name);
+        html  = html.replace(/%ID%/g,currentBicyle.id);
+        let price = currentBicyle.originalPrice;
+
+        if(currentBicyle.discount)
+        {
+            price = (price - ((price * currentBicyle.discount) / 100))
+
+            html = html.replace(/<%DISCOUT%>/g,currentBicyle.discount);
+        }
+
+        html = html.replace(/<%OLDPRICE%>/g,currentBicyle.originalPrice);
+        html = html.replace(/<%CURRENTPRICE%>/g,price)
+        html = html.replace(/<%DISCOUT%>/g,0);
 
         return html
 
