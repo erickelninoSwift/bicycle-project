@@ -84,10 +84,6 @@ server.listen(PORT,() =>{
     console.log('server is running on : ', PORT);
 });
 
-
-
-
-
 function replaceTemplete(html,currentBicyle)
 {
     html = html.replace(/<%IMAGE%>/g,currentBicyle.image);
