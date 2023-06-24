@@ -6,6 +6,7 @@ const url = require('url');
 const fsPromise = require('fs').promises;
 const path = require('path');
 const bicycleData = require('./data/data.json');
+const { rmSync } = require('fs');
 
 
 const PORT = process.env.PORT || 3000;
@@ -113,12 +114,21 @@ function frontPagereplace(html,currentBicyle)
         {
             price = (price - ((price * currentBicyle.discount) / 100))
 
-            html = html.replace(/<%DISCOUT%>/g,currentBicyle.discount);
+            html = html.replace(/<%DISCOUNTRATE%>/g,`<div class="discount__rate"><p>${currentBicyle.discount}% Off</p></div>`);
+        }else
+        {
+            html = html.replace(/<%DISCOUNTRATE%>/g,' ');
         }
 
         html = html.replace(/<%OLDPRICE%>/g,currentBicyle.originalPrice);
         html = html.replace(/<%CURRENTPRICE%>/g,price)
         html = html.replace(/<%DISCOUT%>/g,0);
+
+
+        for(let index = 0 ; index < currentBicyle.star;index++)
+        {
+            html = html.replace(/<%STAR%>/,'checked');
+        }
 
         return html
 
