@@ -25,26 +25,20 @@ const server = http.createServer(async(req,res) =>{
 
         let html = await fsPromise.readFile(path.join(__dirname,'view','bicycles.html'),'utf-8');
 
-        let AllmainBicycle = fsPromise.readFile(path.join(__dirname,'view','main.html'));
+        let AllmainBicycle =  await fsPromise.readFile(path.join(__dirname,'view','main.html'),'utf-8');
 
-
-        if(res.statusCode === 200)
-        {
             let allbicycle = "";
 
-            for(let index = 0; index <= bicycleData.length;index++)
+            for(let index = 0; index <= bicycleData.length - 1;index++)
             {
-                allbicycle += AllmainBicycle;
+                allbicycle += replaceTemplete(AllmainBicycle,bicycleData[index]);
             }
+            
 
-
-            html =  html.replace(/ <%AllMainBicleData%>/,allbicycle);
+            html =  html.replace(/<%AllMainBicleData%>/g,allbicycle);
             res.writeHead(200,{'Content-Type': 'text/html'});
             res.end(html);
-        }else
-        {
-            console.log('file could not be read');
-        }
+        
 
     }else if(myPathName === '/bicycle' && id >= 0 && id <= 5)
     {
@@ -54,19 +48,10 @@ const server = http.createServer(async(req,res) =>{
             return myData.id === id;
         });
 
-        html = html.replace(/<%IMAGE%>/g,currentBicyle.image);
-        html = html.replace(/<%NAMES%>/g,currentBicyle.name);
-        html = html.replace(/<%NAMES%>/g,currentBicyle.name);
-        let price = currentBicyle.originalPrice;
-        if(currentBicyle.discount)
-        {
-            price = (price - ((price * currentBicyle.discount) / 100))
-        }
-
-        html = html.replace(/<%NEWPRICE%>/g,price);
+        let myHTMl = replaceTemplete(html,currentBicyle);
 
         res.writeHead(200,{'Content-Type': 'text/html'});
-        res.end(html);
+        res.end(myHTMl);
 
     }else if((req.url).includes('.png'))
     {
@@ -97,3 +82,26 @@ const server = http.createServer(async(req,res) =>{
 server.listen(PORT,() =>{
     console.log('server is running on : ', PORT);
 });
+
+
+
+
+
+function replaceTemplete(html,currentBicyle)
+{
+    html = html.replace(/<%IMAGE%>/g,currentBicyle.image);
+        html = html.replace(/<%NAMES%>/g,currentBicyle.name);
+        html = html.replace(/<%NAMES%>/g,currentBicyle.name);
+        let price = currentBicyle.originalPrice;
+        if(currentBicyle.discount)
+        {
+            price = (price - ((price * currentBicyle.discount) / 100))
+        }
+
+        html = html.replace(/<%NEWPRICE%>/g,price);
+
+        return html
+
+}
+
+
